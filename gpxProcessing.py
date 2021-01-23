@@ -88,11 +88,13 @@ class gpxProcessing:
         return nn
 
 
+    ### dynamic time warping between two gpx-track curves
     def dtwProcessing(self,gpxData,gold):
 
         ### interpolate activity
         gpxDataInterpolated = self.interpolate(gpxData)
 
+        ### compute dynamic time warping
         dtw, d = similaritymeasures.dtw(gpxDataInterpolated, gold)
 
         print("\nDynamic Time Warping (y) (DTW): ")
@@ -101,6 +103,7 @@ class gpxProcessing:
         return dtw
 
 
+    ### interpolate gpx data along track
     def interpolate(self,gpxData):
 
         interpolationPoints = 1000
