@@ -8,6 +8,8 @@ import geo.sphere as sphere # pip3 install geo-py
 import numpy as np
 from datetime import datetime
 from matplotlib import pyplot as plt
+from scipy.interpolate import splprep, splev
+import similaritymeasures
 
 class gpxProcessing:
 
@@ -86,13 +88,50 @@ class gpxProcessing:
         return nn
 
 
+    def dtwProcessing(self,gpxData,gold):
+
+        ### interpolate activity
+        gpxDataInterpolated = self.interpolate(gpxData)
+
+        dtw, d = similaritymeasures.dtw(gpxDataInterpolated, gold)
+
+        print("\nDynamic Time Warping (y) (DTW): ")
+        print(dtw)
+
+        return dtw
+
+
+    def interpolate(self,gpxData):
+
+        interpolationPoints = 1000
+        
+        ### add random noise to avoid duplicates
+        data = np.array([(x+np.random.uniform(low=-1e-7, high=1e-7),y+np.random.uniform(low=-1e-7, high=1e-7)) for x,y in zip(gpxData[0][:], gpxData[1][:])])
+
+        ### function that interpolates original data
+        tck, u = splprep(data.T, u=None, s=0.0, t=10, per=1)
+
+        ### 
+        u_new = np.linspace(u.min(), u.max(), interpolationPoints)
+
+        ### fit interpolation function to equi-distant data
+        lat, lon = splev(u_new, tck, der=0)
+
+        ### only return necessary gpx data
+        points = np.zeros((interpolationPoints,2))
+        points[:, 0] = lat
+        points[:, 1] = lon
+
+        return points
+
+
     ### plot gpx track
     def gpxPlot(self,fig,gpxData,plotInfo):
 
         fontSize = 30
         markerSize = 500
         plt.rcParams.update({'font.size': fontSize})
-        plt.scatter(gpxData[0,:],gpxData[1,:],s=markerSize,marker=plotInfo[1],c=plotInfo[2],label=plotInfo[0])
+        plt.scatter(gpxData[1,:],gpxData[0,:],s=markerSize,marker=plotInfo[1],c=plotInfo[2],label=plotInfo[0])
         plt.legend(loc='upper left')
         plt.xlabel("Longitude")
         plt.ylabel("Latitude")
