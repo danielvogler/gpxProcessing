@@ -11,6 +11,9 @@ from matplotlib import pyplot as plt
 from scipy.interpolate import splprep, splev
 import similaritymeasures
 
+import warnings
+warnings.filterwarnings("ignore")
+
 class gpxProcessing:
 
     ### Load gpx file and extract information
@@ -45,8 +48,8 @@ class gpxProcessing:
     def gpxTrackCrop(self,gold,gpxData,radius):
 
         ### find possible start/end trackpoints
-        nnStart = self.nearestNeighbours(gpxData,gold[:4,0],radius)
-        nnFinish = self.nearestNeighbours(gpxData,gold[:4,-1],radius)
+        nnStart, nnStartIdx = self.nearestNeighbours(gpxData,gold[:4,0],radius)
+        nnFinish, nnFinishIdx = self.nearestNeighbours(gpxData,gold[:4,-1],radius)
 
         ### determine time range for gpx track
         nnStartEarliest = min(nnStart[3])
@@ -70,26 +73,29 @@ class gpxProcessing:
         distance = [sphere._haversine_distance(i, centroid[:2]) for i in gpxData[:4,:][:2].T ]
 
         ### points within radius distance of centroid
-        indices = [int(i) for i, x in enumerate(distance) if x < radius]
+        idx = [int(i) for i, x in enumerate(distance) if x < radius]
 
         ### check if nearby points were found
-        if not indices:
+        if not idx:
             print("No trackpoints found near centroid\n")
             return -1
 
         ### lat, lon, ele, time, distance of all nearest neighbours
-        lat   = [gpxData[0,i] for i in indices]
-        lon   = [gpxData[1,i] for i in indices]
-        ele   = [gpxData[2,i] for i in indices]
-        T     = [gpxData[3,i] for i in indices]
-        dis   = [distance[i] for i in indices]
+        lat   = [gpxData[0,i] for i in idx]
+        lon   = [gpxData[1,i] for i in idx]
+        ele   = [gpxData[2,i] for i in idx]
+        T     = [gpxData[3,i] for i in idx]
+        dis   = [distance[i] for i in idx]
         nn = np.asarray([lat, lon, ele, T, dis])
 
-        return nn
+        return nn, idx
 
 
     ### dynamic time warping between two gpx-track curves
-    def dtwProcessing(self,gpxData,gold):
+    def dtwComputation(self,gpxData,gold):
+
+        ### tie difference of start to finish
+        deltaT = gpxData[3][-1]-gpxData[3][0]
 
         ### interpolate activity
         gpxDataInterpolated = self.interpolate(gpxData)
@@ -97,10 +103,10 @@ class gpxProcessing:
         ### compute dynamic time warping
         dtw, d = similaritymeasures.dtw(gpxDataInterpolated, gold)
 
-        print("\nDynamic Time Warping (y) (DTW): ")
-        print(dtw)
+        print("\nDTW (y): %2.5f"% (dtw) )
+        print("T [s]:  " , (deltaT) )
 
-        return dtw
+        return dtw, deltaT
 
 
     ### interpolate gpx data along track
