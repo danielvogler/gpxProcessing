@@ -4,7 +4,7 @@ gpxProcessing
 """
 
 import gpxpy # pip3 install gpxpy
-import geo.sphere as sphere # pip3 install geo-py
+from haversine import haversine # pip3 install haversine
 import numpy as np
 from datetime import datetime
 from matplotlib import pyplot as plt
@@ -69,8 +69,8 @@ class gpxProcessing:
     ### find nearest neighbouring points of input point
     def nearestNeighbours(self,gpxData,centroid,radius):
 
-        ### distance of all points to centroid
-        distance = [sphere._haversine_distance(i, centroid[:2]) for i in gpxData[:4,:][:2].T ]
+        ### distance (m) of all points to centroid
+        distance = [haversine(i, centroid[:2]) * 1000 for i in gpxData[:4,:][:2].T ]
 
         ### points within radius distance of centroid
         idx = [int(i) for i, x in enumerate(distance) if x < radius]
@@ -113,7 +113,7 @@ class gpxProcessing:
     def interpolate(self,gpxData):
 
         interpolationPoints = 1000
-        
+
         ### add random noise to avoid duplicates
         data = np.array([(x+np.random.uniform(low=-1e-7, high=1e-7),y+np.random.uniform(low=-1e-7, high=1e-7)) for x,y in zip(gpxData[0][:], gpxData[1][:])])
 
