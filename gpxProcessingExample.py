@@ -11,12 +11,12 @@ startTime = datetime.now()
 folderPath = "gpx_files/"
 
 ### example activity - matching tracks after cropping
-goldName = "tdh1_dv.gpx"
-fileName = "tdh1_mg.gpx"
+# goldName = "tdh1_dv.gpx"
+# fileName = "tdh1_mg.gpx"
 
 ###
-# goldName = "tds_sunnestube_segment.gpx"
-# fileName = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
+goldName = "tds_sunnestube_segment.gpx"
+fileName = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # fileName = "tds_sunnestube_activity_25_55.gpx"        # 0:25:55
 # fileName = "tds_sunnestube_activity_25_39.gpx"        # 0:25:39
 
@@ -46,7 +46,7 @@ fileName = "tdh1_mg.gpx"
 
 
 ### radius (m) around start/end trackpoints
-radius = 50
+radius = 7
 
 ### dtw threshold
 dtwThreshold = 0.7
