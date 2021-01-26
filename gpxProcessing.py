@@ -118,7 +118,7 @@ class gpxProcessing:
         data = np.array([(x+np.random.uniform(low=-1e-7, high=1e-7),y+np.random.uniform(low=-1e-7, high=1e-7)) for x,y in zip(gpxData[0][:], gpxData[1][:])])
 
         ### function that interpolates original data
-        tck, u = splprep(data.T, u=None, s=0.0, t=10, per=1)
+        tck, u = splprep(data.T, u=None, s=0.0, t=10, per=0)
 
         ### 
         u_new = np.linspace(u.min(), u.max(), interpolationPoints)
@@ -128,6 +128,8 @@ class gpxProcessing:
 
         ### only return necessary gpx data
         points = np.zeros((interpolationPoints,2))
+
+        # points = np.asarray([lat, lon])
         points[:, 0] = lat
         points[:, 1] = lon
 

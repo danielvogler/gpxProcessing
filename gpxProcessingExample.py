@@ -99,9 +99,18 @@ print("Total execution time:", datetime.now() - startTime)
 ### plot gpx tracks
 fig = plt.figure(num=None, figsize=(200, 150), dpi=80, facecolor='w', edgecolor='k')
 gp.gpxPlot(fig,trkps,["Original Activity","+","b"])
-gp.gpxPlot(fig,gpxCropped,["Cropped","+","g"])
+gp.gpxPlot(fig,gpxCropped,["Activity Cropped","+","g"])
 gp.gpxPlot(fig,nnStart,["NN Start","o","k"])
 gp.gpxPlot(fig,nnFinish,["NN Finish","o","k"])
 gp.gpxPlot(fig,gold,["Gold","+","r"])
+
+### plot interpolated gpx tracks
+fig = plt.figure(num=None, figsize=(200, 150), dpi=80, facecolor='w', edgecolor='k')
+gp.gpxPlot(fig,gold,["Gold","o","r"])
+gp.gpxPlot(fig,goldInterpolated.T,["Gold Interpolated","+","r"])
+gp.gpxPlot(fig,gpxCropped,["Activity Cropped","o","g"])
+gpxInterpolated = gp.interpolate(gpxCropped)
+gp.gpxPlot(fig,gpxInterpolated.T,["Activity Interpolated","x","g"])
+
 plt.show()
 exit()
