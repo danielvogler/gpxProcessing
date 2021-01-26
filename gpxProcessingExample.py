@@ -11,8 +11,20 @@ startTime = datetime.now()
 folderPath = "gpx_files/"
 
 ### example activity - matching tracks after cropping
-goldName = "tdh1_dv.gpx"
-fileName = "tdh1_mg.gpx" 
+# goldName = "tdh1_dv.gpx"
+# fileName = "tdh1_mg.gpx"
+
+###
+goldName = "tds_sunnestube_segment.gpx"
+fileName = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
+# fileName = "tds_sunnestube_activity_25_55.gpx"        # 0:25:55
+# fileName = "tds_sunnestube_activity_25_39.gpx"        # 0:25:39
+
+# goldName = "nordicstar_weltcup_segment.gpx"
+# fileName = "nordicstar_weltcup_activity_25_52.gpx"    # 0:25:35
+
+# goldName = "nordicstar_dischmatal_segment.gpx"
+# fileName = "nordicstar_dischmatal_activity_44_39.gpx" # 0:44:37
 
 ### example activity - no matching start/end points found
 # goldName = "tdh1_dv.gpx"
@@ -20,27 +32,27 @@ fileName = "tdh1_mg.gpx"
 
 ### example activity - gpx track jump during activity - tdh2
 # goldName = "tdh2.gpx"
-# fileName = "tdh2_error.gpx" 
+# fileName = "tdh2_error.gpx"
 
 ### example activity - overlapping tracks - tdu3
 # goldName = "tdu3_dv.gpx"
-# fileName = "tdu3_ls.gpx" 
+# fileName = "tdu3_ls.gpx"
 
 ### example activity - match TH
 # goldName = "th1_gold.gpx"
-# fileName = "th1_ttb.gpx" 
+# fileName = "th1_ttb.gpx"
 # goldName = "th2_gold.gpx"
 # goldName = "th3_gold.gpx"
 
 
-### radius around start/end trackpoints
-radius = 50
+### radius (m) around start/end trackpoints
+radius = 7
 
 ### dtw threshold
-dtwThreshold = 0.5
+dtwThreshold = 0.7
 
 ### gpx sub-track must consist of minimum number of points
-minTrkps = 5
+minTrkps = 50
 
 
 ### initialize
@@ -85,11 +97,11 @@ print("Final T [s]:  " , (finalT) )
 print("Total execution time:", datetime.now() - startTime)
 
 ### plot gpx tracks
-fig = plt.figure(num=None, figsize=(20, 15), dpi=80, facecolor='w', edgecolor='k')
-gp.gpxPlot(fig,gold,["Gold","+","r"])
-gp.gpxPlot(fig,nnStart,["NN Start","o","k"])
-gp.gpxPlot(fig,nnFinish,["NN Finish","o","k"])
+fig = plt.figure(num=None, figsize=(200, 150), dpi=80, facecolor='w', edgecolor='k')
 gp.gpxPlot(fig,trkps,["Original Activity","+","b"])
 gp.gpxPlot(fig,gpxCropped,["Cropped","+","g"])
+gp.gpxPlot(fig,nnStart,["NN Start","o","k"])
+gp.gpxPlot(fig,nnFinish,["NN Finish","o","k"])
+gp.gpxPlot(fig,gold,["Gold","+","r"])
 plt.show()
 exit()
