@@ -26,6 +26,9 @@ fileName = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # goldName = "nordicstar_dischmatal_segment.gpx"
 # fileName = "nordicstar_dischmatal_activity_44_39.gpx" # 0:44:37
 
+# goldName = "green_marathon_segment.gpx"
+# fileName = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW
+
 ### example activity - no matching start/end points found
 # goldName = "tdh1_dv.gpx"
 # fileName = "tdu2a.gpx"
