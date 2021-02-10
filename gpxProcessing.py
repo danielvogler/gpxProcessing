@@ -103,8 +103,8 @@ class gpxProcessing:
         ### compute dynamic time warping
         dtw, d = similaritymeasures.dtw(gpxDataInterpolated, gold)
 
-        print("\nDTW (y): %2.5f"% (dtw) )
-        print("T [s]:  " , (deltaT) )
+        # print("\nDTW (y): %2.5f"% (dtw) )
+        # print("T [s]:  " , (deltaT) )
 
         return dtw, deltaT
 
