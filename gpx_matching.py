@@ -60,7 +60,7 @@ def process(goldPath, activityPath):
     print(">> Total execution time:", datetime.now() - startTime)
 
 def main():
-    amqp_connection = os.environ.get('CLOUDAMQP', 'amqp://laceup:laceup@localhost:5672/%2f/messages')
+    amqp_connection = os.environ.get('AMQP_URL', 'amqp://laceup:laceup@localhost:5672/%2f/messages')
     connection = pika.BlockingConnection(pika.URLParameters(amqp_connection))
     channel = connection.channel()
 
