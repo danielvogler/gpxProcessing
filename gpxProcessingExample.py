@@ -5,122 +5,92 @@ gpxProcessingExample
 
 from gpxProcessing import gpxProcessing
 from matplotlib import pyplot as plt
-from datetime import timedelta, datetime
-startTime = datetime.now()
 
-folderPath = "gpx_files/"
+folder_path = "gpx_files/"
 
 ### example activity - matching tracks after cropping
-# goldName = "tdh1_dv.gpx"
-# fileName = "tdh1_mg.gpx"
+# gold_name = "tdh1_dv.gpx"
+# activity_name = "tdh1_mg.gpx"
 
 ###
-goldName = "tds_sunnestube_segment.gpx"
-fileName = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
-# fileName = "tds_sunnestube_activity_25_55.gpx"        # 0:25:55
-# fileName = "tds_sunnestube_activity_25_39.gpx"        # 0:25:39
+gold_name = "tds_sunnestube_segment.gpx"
+activity_name = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
+# activity_name = "tds_sunnestube_activity_25_55.gpx"        # 0:25:55
+# activity_name = "tds_sunnestube_activity_25_39.gpx"        # 0:25:39
 
-# goldName = "nordicstar_weltcup_segment.gpx"
-# fileName = "nordicstar_weltcup_activity_25_52.gpx"    # 0:25:35
+# gold_name = "nordicstar_weltcup_segment.gpx"
+# activity_name = "nordicstar_weltcup_activity_25_52.gpx"    # 0:25:35
 
-# goldName = "nordicstar_dischmatal_segment.gpx"
-# fileName = "nordicstar_dischmatal_activity_44_39.gpx" # 0:44:37
+# gold_name = "nordicstar_dischmatal_segment.gpx"
+# activity_name = "nordicstar_dischmatal_activity_44_39.gpx" # 0:44:37
 
-# goldName = "green_marathon_segment.gpx"
-# fileName = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW
+# gold_name = "green_marathon_segment.gpx"
+# activity_name = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW
 
 ### example activity - no matching start/end points found
-# goldName = "tdh1_dv.gpx"
-# fileName = "tdu2a.gpx"
+# gold_name = "tdh1_dv.gpx"
+# activity_name = "tdu2a.gpx"
 
 ### example activity - gpx track jump during activity - tdh2
-# goldName = "tdh2.gpx"
-# fileName = "tdh2_error.gpx"
+# gold_name = "tdh2.gpx"
+# activity_name = "tdh2_error.gpx"
 
 ### example activity - overlapping tracks - tdu3
-# goldName = "tdu3_dv.gpx"
-# fileName = "tdu3_ls.gpx"
+# gold_name = "tdu3_dv.gpx"
+# activity_name = "tdu3_ls.gpx"
 
 ### example activity - match TH
-# goldName = "th1_gold.gpx"
-# fileName = "th1_ttb.gpx"
-# goldName = "th2_gold.gpx"
-# goldName = "th3_gold.gpx"
-
+# gold_name = "th1_gold.gpx"
+# activity_name = "th1_ttb.gpx"
+# gold_name = "th2_gold.gpx"
+# gold_name = "th3_gold.gpx"
 
 ### radius (m) around start/end trackpoints
 radius = 7
 
-### dtw threshold
-dtwThreshold = 0.2
-
-### gpx sub-track must consist of minimum number of points
-minTrkps = 50
-
+"""
+Track matching
+"""
 
 ### initialize
 gp = gpxProcessing()
 
+final_time, final_dtw = gp.dtw_match(folder_path+gold_name, folder_path+activity_name)
+
+"""
+Track plotting
+"""
+
 ### load gold standard/baseline segment
-gold = gp.gpxLoading(folderPath+goldName)
+gold = gp.gpx_loading(folder_path + gold_name)
 ### interpolate gold data
-goldInterpolated = gp.interpolate(gold)
+gold_interpolated = gp.interpolate(gold)
 
 ### load activity data to be edited
-trkps = gp.gpxLoading(folderPath+fileName)
+trkps = gp.gpx_loading(folder_path + activity_name)
 ### crop activity data to segment length
-gpxCropped = gp.gpxTrackCrop(gold,trkps,radius)
+gpx_cropped = gp.gpx_track_crop(gold, trkps, radius)
 
 ### find potential start/end trackpoints - just for plotting
-nnStart, nnStartIdx = gp.nearestNeighbours(gpxCropped,gold[:4,0],radius)
-nnFinish, nnFinishIdx = gp.nearestNeighbours(gpxCropped,gold[:4,-1],radius)
-
-### initial time
-finalT = timedelta(seconds=1e6)
-### tested combinations of start/end points
-combinations_tested = 0
-
-### possible start point combinations
-for i in nnStartIdx:
-
-    ### possible end point combinations
-    for j in nnFinishIdx:
-
-        ### start needs to happen before finish and include minTrkps in between
-        if i < j-minTrkps:
-
-            combinations_tested += 1
-
-            ### compute DTW between gold and activity
-            dtw, deltaT = gp.dtwComputation(gpxCropped[:,i:j+1],goldInterpolated)
-
-            ### collect final time and dtw
-            if deltaT < finalT and dtw < dtwThreshold:
-                finalT = deltaT
-                finalDTW = dtw
-
-print("\nFinal DTW (y): %2.5f"% (finalDTW) )
-print("Final T [s]:  " , (finalT) )
-
-print("\nTotal execution time:", datetime.now() - startTime)
-print("Total combinations tested:" , (combinations_tested) )
-print("Execution time per combination:" , ((datetime.now() - startTime)/combinations_tested) )
+nn_start, nn_start_idx = gp.nearest_neighbours(gpx_cropped,gold[:4,0],radius)
+nn_finish, nn_finish_idx = gp.nearest_neighbours(gpx_cropped,gold[:4,-1],radius)
 
 ### plot gpx tracks
 fig = plt.figure(num=None, figsize=(200, 150), dpi=80, facecolor='w', edgecolor='k')
-gp.gpxPlot(fig,trkps,["Original Activity","+","b"])
-gp.gpxPlot(fig,gpxCropped,["Activity Cropped","+","g"])
-gp.gpxPlot(fig,nnStart,["NN Start","o","k"])
-gp.gpxPlot(fig,nnFinish,["NN Finish","o","k"])
-gp.gpxPlot(fig,gold,["Gold","+","r"])
+gp.gpx_plot(fig,trkps,["Activity","+","b"])
+gp.gpx_plot(fig,gpx_cropped,["Activity Cropped","x","b"])
+gp.gpx_plot(fig,nn_start,["NN Start Cropped","x","k"],700)
+gp.gpx_plot(fig,nn_finish,["NN Finish Cropped","x","0.5"],700)
+gp.gpx_plot(fig,gold,["Gold","+","r"])
+
 
 ### plot interpolated gpx tracks
 fig = plt.figure(num=None, figsize=(200, 150), dpi=80, facecolor='w', edgecolor='k')
-gp.gpxPlot(fig,gold,["Gold","o","r"])
-gp.gpxPlot(fig,goldInterpolated.T,["Gold Interpolated","+","r"])
-gp.gpxPlot(fig,gpxCropped,["Activity Cropped","o","g"])
-gpxInterpolated = gp.interpolate(gpxCropped)
-gp.gpxPlot(fig,gpxInterpolated.T,["Activity Interpolated","x","g"])
+gp.gpx_plot(fig,gold,["Gold","o","r"])
+gp.gpx_plot(fig,gold_interpolated.T,["Gold Interpolated","+","r"])
+gp.gpx_plot(fig,gpx_cropped,["Activity Cropped","o","g"])
+gpx_interpolated = gp.interpolate(gpx_cropped)
+gp.gpx_plot(fig,gpx_interpolated.T,["Activity Interpolated","x","g"])
 
 plt.show()
 exit()
