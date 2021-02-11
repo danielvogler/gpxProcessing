@@ -26,8 +26,8 @@ fileName = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # goldName = "nordicstar_dischmatal_segment.gpx"
 # fileName = "nordicstar_dischmatal_activity_44_39.gpx" # 0:44:37
 
-goldName = "green_marathon_segment.gpx"
-fileName = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW
+# goldName = "green_marathon_segment.gpx"
+# fileName = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW
 
 ### example activity - no matching start/end points found
 # goldName = "tdh1_dv.gpx"
@@ -49,10 +49,10 @@ fileName = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 proce
 
 
 ### radius (m) around start/end trackpoints
-radius = 15#7
+radius = 7
 
 ### dtw threshold
-dtwThreshold = 0.7
+dtwThreshold = 0.2
 
 ### gpx sub-track must consist of minimum number of points
 minTrkps = 50
