@@ -26,8 +26,8 @@ fileName = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # goldName = "nordicstar_dischmatal_segment.gpx"
 # fileName = "nordicstar_dischmatal_activity_44_39.gpx" # 0:44:37
 
-# goldName = "green_marathon_segment.gpx"
-# fileName = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW
+goldName = "green_marathon_segment.gpx"
+fileName = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW
 
 ### example activity - no matching start/end points found
 # goldName = "tdh1_dv.gpx"
@@ -49,7 +49,7 @@ fileName = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 
 
 ### radius (m) around start/end trackpoints
-radius = 7
+radius = 15#7
 
 ### dtw threshold
 dtwThreshold = 0.7
@@ -77,6 +77,9 @@ nnFinish, nnFinishIdx = gp.nearestNeighbours(gpxCropped,gold[:4,-1],radius)
 
 ### initial time
 finalT = timedelta(seconds=1e6)
+### tested combinations of start/end points
+combinations_tested = 0
+
 ### possible start point combinations
 for i in nnStartIdx:
 
@@ -85,6 +88,8 @@ for i in nnStartIdx:
 
         ### start needs to happen before finish and include minTrkps in between
         if i < j-minTrkps:
+
+            combinations_tested += 1
 
             ### compute DTW between gold and activity
             dtw, deltaT = gp.dtwComputation(gpxCropped[:,i:j+1],goldInterpolated)
@@ -97,7 +102,9 @@ for i in nnStartIdx:
 print("\nFinal DTW (y): %2.5f"% (finalDTW) )
 print("Final T [s]:  " , (finalT) )
 
-print("Total execution time:", datetime.now() - startTime)
+print("\nTotal execution time:", datetime.now() - startTime)
+print("Total combinations tested:" , (combinations_tested) )
+print("Execution time per combination:" , ((datetime.now() - startTime)/combinations_tested) )
 
 ### plot gpx tracks
 fig = plt.figure(num=None, figsize=(200, 150), dpi=80, facecolor='w', edgecolor='k')

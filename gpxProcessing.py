@@ -49,7 +49,10 @@ class gpxProcessing:
 
         ### find possible start/end trackpoints
         nnStart, nnStartIdx = self.nearestNeighbours(gpxData,gold[:4,0],radius)
+        print("Points of activity within {}m of gold start: {}".format(radius, len(nnStartIdx) ) )
+
         nnFinish, nnFinishIdx = self.nearestNeighbours(gpxData,gold[:4,-1],radius)
+        print("Points of activity within {}m of gold finish: {}".format(radius, len(nnFinishIdx) ) )
 
         ### determine time range for gpx track
         nnStartEarliest = min(nnStart[3])
