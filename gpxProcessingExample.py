@@ -46,7 +46,7 @@ activity_name = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # gold_name = "th3_gold.gpx"
 
 ### radius (m) around start/end trackpoints
-radius = 7
+radius = 15
 
 """
 Track matching
@@ -55,7 +55,7 @@ Track matching
 ### initialize
 gp = gpxProcessing()
 
-final_time, final_dtw = gp.dtw_match(folder_path+gold_name, folder_path+activity_name)
+final_time, final_dtw = gp.dtw_match(folder_path+gold_name, folder_path+activity_name,radius=radius)
 
 """
 Track plotting
@@ -83,7 +83,7 @@ gp.gpx_plot(fig,nn_start,["NN Start Cropped","x","k"],700)
 gp.gpx_plot(fig,nn_finish,["NN Finish Cropped","x","0.5"],700)
 gp.gpx_plot(fig,gold,["Gold","+","r"])
 
-
+20
 ### plot interpolated gpx tracks
 fig = plt.figure(num=None, figsize=(200, 150), dpi=80, facecolor='w', edgecolor='k')
 gp.gpx_plot(fig,gold,["Gold","o","r"])

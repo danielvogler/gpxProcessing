@@ -38,10 +38,13 @@ class gpxProcessing:
         nn_start, nn_start_idx = self.nearest_neighbours(gpx_cropped,gold[:4,0],radius)
         nn_finish, nn_finish_idx = self.nearest_neighbours(gpx_cropped,gold[:4,-1],radius)
 
-        ### initial time
-        final_time = timedelta(seconds=1e6)
         ### tested combinations of start/end points
         combinations_tested = 0
+
+        ### initialize segment combinations
+        seg_time = []
+        seg_start_idx = []
+        seg_finish_idx = []
 
         ### possible start point combinations
         for i in nn_start_idx:
@@ -49,18 +52,39 @@ class gpxProcessing:
             ### possible end point combinations
             for j in nn_finish_idx:
 
-                ### start needs to happen before finish and include minTrkps in between
+                ### start needs to happen before finish and include min_trkps in between
                 if i < j-min_trkps:
 
                     combinations_tested += 1
 
-                    ### compute DTW between gold and activity
-                    dtw, delta_time = self.dtw_computation(gpx_cropped[:,i:j+1],gold_interpolated)
+                    ### segment_time
+                    seg_time.append( gpx_cropped[3,j] - gpx_cropped[3,i] )
+                    seg_start_idx.append(i)
+                    seg_finish_idx.append(j)
 
-                    ### collect final time and dtw
-                    if delta_time < final_time and dtw < dtw_threshold:
-                        final_time = delta_time
-                        final_dtw = dtw
+        ### compile information of individual times and array indices
+        seg_info = np.asarray([seg_time, seg_start_idx, seg_finish_idx])
+
+        ### find indices of shortest runs to loop through in ascending order
+        seg_sort = [seg_info[:,idx] for idx, value in sorted(enumerate(seg_info[0]), key=lambda x: x[1])]
+
+        ### initialize segment check
+        s = -1
+        final_dtw = 1e6
+
+        ### compute dtw in ascending order
+        ### return if shortest activity satisfies dtw requirement
+        while final_dtw > dtw_threshold:
+
+            ### counter
+            s += 1
+
+            ### compute DTW between gold and activity
+            dtw, delta_time = self.dtw_computation(gpx_cropped[:,seg_sort[s][1]:seg_sort[s][2]+1],gold_interpolated)
+
+            ### update final time and dtw
+            final_time = delta_time
+            final_dtw = dtw
 
         print("\nFinal DTW (y): %2.5f"% (final_dtw) )
         print("Final T [s]:  " , (final_time) )
