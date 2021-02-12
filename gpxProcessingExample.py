@@ -9,12 +9,12 @@ from matplotlib import pyplot as plt
 folder_path = "gpx_files/"
 
 ### example activity - matching tracks after cropping
-# gold_name = "tdh1_dv.gpx"
-# activity_name = "tdh1_mg.gpx"
+gold_name = "tdh1_dv.gpx"
+activity_name = "tdh1_mg.gpx"
 
 ###
-gold_name = "tds_sunnestube_segment.gpx"
-activity_name = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
+# gold_name = "tds_sunnestube_segment.gpx"
+# activity_name = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # activity_name = "tds_sunnestube_activity_25_55.gpx"        # 0:25:55
 # activity_name = "tds_sunnestube_activity_25_39.gpx"        # 0:25:39
 
@@ -25,7 +25,7 @@ activity_name = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # activity_name = "nordicstar_dischmatal_activity_44_39.gpx" # 0:44:37
 
 # gold_name = "green_marathon_segment.gpx"
-# activity_name = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW
+# activity_name = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW, 20m radius
 
 ### example activity - no matching start/end points found
 # gold_name = "tdh1_dv.gpx"
@@ -46,7 +46,7 @@ activity_name = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # gold_name = "th3_gold.gpx"
 
 ### radius (m) around start/end trackpoints
-radius = 15
+radius = 40#7
 
 """
 Track matching
@@ -55,6 +55,7 @@ Track matching
 ### initialize
 gp = gpxProcessing()
 
+### dtw matching for example segments/activities
 final_time, final_dtw = gp.dtw_match(folder_path+gold_name, folder_path+activity_name,radius=radius)
 
 """
@@ -77,20 +78,19 @@ nn_finish, nn_finish_idx = gp.nearest_neighbours(gpx_cropped,gold[:4,-1],radius)
 
 ### plot gpx tracks
 fig = plt.figure(num=None, figsize=(200, 150), dpi=80, facecolor='w', edgecolor='k')
-gp.gpx_plot(fig,trkps,["Activity","+","b"])
-gp.gpx_plot(fig,gpx_cropped,["Activity Cropped","x","b"])
-gp.gpx_plot(fig,nn_start,["NN Start Cropped","x","k"],700)
-gp.gpx_plot(fig,nn_finish,["NN Finish Cropped","x","0.5"],700)
-gp.gpx_plot(fig,gold,["Gold","+","r"])
+gp.gpx_plot(fig,nn_start,["NN Start Cropped","X","b"],1200)
+gp.gpx_plot(fig,nn_finish,["NN Finish Cropped","P","b"],1200)
+gp.gpx_plot(fig,trkps,["Activity",".","k"])
+gp.gpx_plot(fig,gpx_cropped,["Activity Cropped","o","k"])
+gp.gpx_plot(fig,gold,["Gold","o","r"])
 
-20
 ### plot interpolated gpx tracks
 fig = plt.figure(num=None, figsize=(200, 150), dpi=80, facecolor='w', edgecolor='k')
-gp.gpx_plot(fig,gold,["Gold","o","r"])
-gp.gpx_plot(fig,gold_interpolated.T,["Gold Interpolated","+","r"])
-gp.gpx_plot(fig,gpx_cropped,["Activity Cropped","o","g"])
+gp.gpx_plot(fig,gpx_cropped,["Activity Cropped","o","k"])
 gpx_interpolated = gp.interpolate(gpx_cropped)
-gp.gpx_plot(fig,gpx_interpolated.T,["Activity Interpolated","x","g"])
+gp.gpx_plot(fig,gpx_interpolated.T,["Activity Interpolated",".","k"])
+gp.gpx_plot(fig,gold,["Gold","o","r"])
+gp.gpx_plot(fig,gold_interpolated.T,["Gold Interpolated",".","r"])
 
 plt.show()
 exit()

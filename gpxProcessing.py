@@ -39,7 +39,7 @@ class gpxProcessing:
         nn_finish, nn_finish_idx = self.nearest_neighbours(gpx_cropped,gold[:4,-1],radius)
 
         ### tested combinations of start/end points
-        combinations_tested = 0
+        combinations_to_test = 0
 
         ### initialize segment combinations
         seg_time = []
@@ -55,7 +55,7 @@ class gpxProcessing:
                 ### start needs to happen before finish and include min_trkps in between
                 if i < j-min_trkps:
 
-                    combinations_tested += 1
+                    combinations_to_test += 1
 
                     ### segment_time
                     seg_time.append( gpx_cropped[3,j] - gpx_cropped[3,i] )
@@ -74,7 +74,8 @@ class gpxProcessing:
 
         ### compute dtw in ascending order
         ### return if shortest activity satisfies dtw requirement
-        while final_dtw > dtw_threshold:
+        ### exit if all combinations are tested
+        while final_dtw > dtw_threshold and combinations_to_test > s + 1:
 
             ### counter
             s += 1
@@ -86,14 +87,25 @@ class gpxProcessing:
             final_time = delta_time
             final_dtw = dtw
 
-        print("\nFinal DTW (y): %2.5f"% (final_dtw) )
-        print("Final T [s]:  " , (final_time) )
+        print("\n----- Finished DTW segment match -----")
+
+        print("\nTotal combinations to test:" , (combinations_to_test) )
+        print("Total combinations tested:" , (s+1) )
 
         print("\nTotal execution time:", datetime.now() - start_time)
-        print("Total combinations tested:" , (combinations_tested) )
-        print("Execution time per combination:" , ((datetime.now() - start_time)/combinations_tested) )
+        print("Execution time per combination:" , ((datetime.now() - start_time)/(s+1)) )
+
+        print("\nFinal DTW (y): %2.5f"% (final_dtw) )
+
+        ### check if segment match was achieved
+        if final_dtw < dtw_threshold:
+            print("Final T [s]:  " , (final_time) )
+
+        else:
+            print("\nNo segment match found")
 
         return final_time, final_dtw
+
 
 
     ### Load gpx file and extract information
