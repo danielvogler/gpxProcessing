@@ -4,7 +4,7 @@ Pre-processing and analysis of gpx tracks (activities) for comparison to an exis
 
 ### Usage 
 - GPX tracks are in `./gpx_files/`
-- Example usage demonstrated in `./gpxProcessingExample`
+- Example usage demonstrated in `./gpx_processing_example`
 
 ### Dependencies
 Python libraries:
@@ -16,4 +16,11 @@ Python libraries:
 * numpy
 * matplotlib
 
-![Example image](/images/example_cropped_track.png "Example of gpx crop")
+
+![Example image](/images/example_track.png "Example of gpx crop")
+Example of gold segment, total activity and activity cropped to gold segment length.
+
+
+![Example image](/images/example_track_start-finish.png "Example start and end points")
+Example of start and end points to crop gpx tracks and obtain pairs for dtw matching.
+
