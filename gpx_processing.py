@@ -15,7 +15,7 @@ from datetime import timedelta, datetime
 import warnings
 warnings.filterwarnings("ignore")
 
-class gpxProcessing:
+class GpxProcessing:
 
     ### prepare gpx tracks for dtw matching
     ### find all suitable start/end point combinations
@@ -141,9 +141,9 @@ class gpxProcessing:
 
         ### find possible start/end trackpoints
         nn_start, nn_start_idx = self.nearest_neighbours(gpx_data,gold[:4,0],radius)
-        print("\nPoints of activity within {}m of gold start: {}".format(radius, len(nn_start_idx) ) )
-
         nn_finish, nn_finish_idx = self.nearest_neighbours(gpx_data,gold[:4,-1],radius)
+
+        print("\nPoints of activity within {}m of gold start: {}".format(radius, len(nn_start_idx) ) )
         print("Points of activity within {}m of gold finish: {}".format(radius, len(nn_finish_idx) ) )
 
         ### determine time range for gpx track
@@ -172,8 +172,9 @@ class gpxProcessing:
 
         ### check if nearby points were found
         if not idx:
-            print("No trackpoints found near centroid\n")
-            return -1
+            print("\nNo trackpoints found near centroid\n")
+            exit()
+            return -1, -1
 
         ### lat, lon, ele, time, distance of all nearest neighbours
         lat   = [gpx_data[0,i] for i in idx]

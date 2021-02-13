@@ -3,59 +3,73 @@ Daniel Vogler
 gpxProcessingExample
 """
 
-from gpxProcessing import gpxProcessing
+from gpx_processing import GpxProcessing
 from matplotlib import pyplot as plt
 
 folder_path = "gpx_files/"
 
-### example activity - matching tracks after cropping
-gold_name = "tdh1_dv.gpx"
-activity_name = "tdh1_mg.gpx"
+"""
+Example activities
+"""
 
-###
-# gold_name = "tds_sunnestube_segment.gpx"
-# activity_name = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
+### example - cropping
+### dtw = 0.28447 with radius = 40m
+# gold_name = "tdh1_dv.gpx"
+# activity_name = "tdh1_mg.gpx"
+
+### example - one-way skimo
+### dtw=0.09702, radius=7m, t=0:25:22
+gold_name = "tds_sunnestube_segment.gpx"
+activity_name = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # activity_name = "tds_sunnestube_activity_25_55.gpx"        # 0:25:55
 # activity_name = "tds_sunnestube_activity_25_39.gpx"        # 0:25:39
 
+### example - two loops
+### dtw=0.06490, radius=34m, t=0:25:46
 # gold_name = "nordicstar_weltcup_segment.gpx"
 # activity_name = "nordicstar_weltcup_activity_25_52.gpx"    # 0:25:35
 
+### example - one-way cross-country ski
+### dtw=0.09671, radius=4m, t=0:25:26
 # gold_name = "nordicstar_dischmatal_segment.gpx"
 # activity_name = "nordicstar_dischmatal_activity_44_39.gpx" # 0:44:37
 
+### example - green marathon zurich
+### dtw = 0.12866, radius = 15m, time = 4:15:11
 # gold_name = "green_marathon_segment.gpx"
-# activity_name = "green_marathon_activity_4_15_17.gpx"        # 4:15:03, 0:20:43 processing time, 0.13 Final DTW, 20m radius
+# activity_name = "green_marathon_activity_4_15_17.gpx"        # 4:15:03
 
 ### example activity - no matching start/end points found
 # gold_name = "tdh1_dv.gpx"
 # activity_name = "tdu2a.gpx"
 
 ### example activity - gpx track jump during activity - tdh2
+### dtw=0.08136, radius=7m, t=0:36:14
 # gold_name = "tdh2.gpx"
 # activity_name = "tdh2_error.gpx"
 
-### example activity - overlapping tracks - tdu3
+### example - intersecting tracks - tdu3
+### dtw=0.01154, radius=7m, t=0:26:53
 # gold_name = "tdu3_dv.gpx"
 # activity_name = "tdu3_ls.gpx"
 
-### example activity - match TH
+### example - match TH
 # gold_name = "th1_gold.gpx"
-# activity_name = "th1_ttb.gpx"
 # gold_name = "th2_gold.gpx"
 # gold_name = "th3_gold.gpx"
+# activity_name = "th1_ttb.gpx"
 
 ### radius (m) around start/end trackpoints
-radius = 40#7
+radius = 15
 
 """
 Track matching
 """
 
 ### initialize
-gp = gpxProcessing()
+gp = GpxProcessing()
 
-### dtw matching for example segments/activities
+### dtw matching of example segments/activities
 final_time, final_dtw = gp.dtw_match(folder_path+gold_name, folder_path+activity_name,radius=radius)
 
 """
