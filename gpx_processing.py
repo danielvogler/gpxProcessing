@@ -6,11 +6,11 @@ gpxProcessing
 import gpxpy # pip3 install gpxpy
 from haversine import haversine # pip3 install haversine
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 from matplotlib import pyplot as plt
 from scipy.interpolate import splprep, splev
 import similaritymeasures
-from datetime import timedelta, datetime
+import sys
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -172,9 +172,9 @@ class GpxProcessing:
 
         ### check if nearby points were found
         if not idx:
-            print("\nNo trackpoints found near centroid\n")
-            exit()
-            return -1, -1
+            print("\nNo trackpoints found near centroid")
+            sys.exit(1)
+            return
 
         ### lat, lon, ele, time, distance of all nearest neighbours
         lat   = [gpx_data[0,i] for i in idx]

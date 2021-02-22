@@ -1,6 +1,6 @@
 """
 Daniel Vogler
-gpxProcessingExample
+gpx_processing_example
 """
 
 from gpx_processing import GpxProcessing
@@ -40,8 +40,8 @@ activity_name = "tds_sunnestube_activity_25_25.gpx"          # 0:25:22
 # activity_name = "green_marathon_activity_4_15_17.gpx"        # 4:15:03
 
 ### example activity - no matching start/end points found
-# gold_name = "tdh1_dv.gpx"
-# activity_name = "tdu2a.gpx"
+gold_name = "tdh1_dv.gpx"
+activity_name = "tdu2a.gpx"
 
 ### example activity - gpx track jump during activity - tdh2
 ### dtw=0.08136, radius=7m, t=0:36:14
