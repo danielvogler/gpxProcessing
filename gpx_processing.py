@@ -20,7 +20,7 @@ class GpxProcessing:
     ### prepare gpx tracks for dtw matching
     ### find all suitable start/end point combinations
     ### determine shortest segment match
-    def dtw_match(self,gold_name,activity_name, min_trkps = 50, radius=7, dtw_threshold=0.2):
+    def dtw_match(self,gold_name,activity_name, min_trkps = 50, radius=7, dtw_threshold=0.2, dtw_margin_range=1.5):
 
         start_time = datetime.now()
 
@@ -68,9 +68,11 @@ class GpxProcessing:
         ### find indices of shortest runs to loop through in ascending order
         seg_sort = [seg_info[:,idx] for idx, value in sorted(enumerate(seg_info[0]), key=lambda x: x[1])]
 
-        ### initialize segment check
+        ### initialize segment check parameters
         s = -1
         final_dtw = 1e6
+        match_flag = -1
+        dtw_threshold_soft = dtw_threshold * dtw_margin_range
 
         ### compute dtw in ascending order
         ### return if shortest activity satisfies dtw requirement
@@ -83,9 +85,23 @@ class GpxProcessing:
             ### compute DTW between gold and activity
             dtw, delta_time = self.dtw_computation(gpx_cropped[:,seg_sort[s][1]:seg_sort[s][2]+1],gold_interpolated)
 
-            ### update final time and dtw
-            final_time = delta_time
-            final_dtw = dtw
+            ### update dtw information if threshold is crossed
+            if dtw <= dtw_threshold:
+                
+                ### update final time and dtw
+                final_time = delta_time
+                final_dtw = dtw
+                match_flag = 1
+
+            ### check if soft dtw threshold is observed. 
+            ### only save dtw value and time for shortest (first) match in grey zone 
+            ### shortest grey zone match is overwritten if hard dtw threshold is crossed
+            elif dtw_threshold < dtw <= dtw_threshold_soft and match_flag < 0:
+
+                ### update final time and dtw
+                final_time = delta_time
+                final_dtw = dtw
+                match_flag = 2
 
         print("\n----- Finished DTW segment match -----")
 
@@ -95,16 +111,21 @@ class GpxProcessing:
         print("\nTotal execution time:", datetime.now() - start_time)
         print("Execution time per combination:" , ((datetime.now() - start_time)/(s+1)) )
 
-        print("\nFinal DTW (y): %2.5f"% (final_dtw) )
+        print("\nMatch flag [-]:  ", (match_flag) )
+
 
         ### check if segment match was achieved
-        if final_dtw < dtw_threshold:
+        if match_flag > 0:
             print("Final T [s]:  " , (final_time) )
+            print("Final DTW (y): %2.5f"% (final_dtw) )
+
+            return final_time, final_dtw, match_flag
 
         else:
             print("\nNo segment match found")
 
-        return final_time, final_dtw
+            return "99:99:99", dtw, match_flag
+
 
 
 
